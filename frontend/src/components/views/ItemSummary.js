@@ -9,11 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Stack, Avatar, Typography } from '@mui/material';
-
+import axios from '../../services/api.service';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,10 +34,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 100,
   },
 }));
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
 export default function Item() {
   const [ITEMLIST, setItemList] = useState([]);
@@ -68,8 +64,8 @@ export default function Item() {
           <TableHead>
             <TableRow>
               <StyledTableCell>Item Name</StyledTableCell>
-              <StyledTableCell align="right">Created Date</StyledTableCell>
-              <StyledTableCell align="right">Expiry Date</StyledTableCell>
+              <StyledTableCell align="left">Created Date</StyledTableCell>
+              <StyledTableCell align="left">Expiry Date</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
