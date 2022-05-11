@@ -7,7 +7,7 @@ const yup = require('yup');
 
 const schema = yup.object().shape({
   itemName: yup.string().required(),
-  expiryDate: yup.date().default()
+  expiryDate: yup.date()
 })
 
 

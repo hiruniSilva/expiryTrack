@@ -16,7 +16,7 @@ const ItemAdd = () => {
 
   const ItemSchema = Yup.object().shape({
     itemName: Yup.string().required("Required !"),
-    expiryDate: Yup.date().default("Required !"),
+    expiryDate: Yup.date(),
   });
 
   const formik = useFormik({
@@ -27,7 +27,7 @@ const ItemAdd = () => {
     validationSchema: ItemSchema,
     onSubmit: (data) => {
       axios
-        .post("/api/expiryTracker/addItems", data)
+        .post('/api/expiryTracker/addItems', data)
         .then((res) => {
           toast.success(`Item added successfully`);
           formik.resetForm();
@@ -84,6 +84,7 @@ const ItemAdd = () => {
             <Button type="submit" fullWidth margin="dense" variant="contained">
               Submit
             </Button>
+            
           </Form>
         </FormikProvider>
       </Container>

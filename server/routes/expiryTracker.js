@@ -24,11 +24,12 @@ router.post("/addItems", async (req, res) => {
       itemName : itemName,
       expiryDate: expiryDate
     })
-    console.log("ITEM NAME: "+itemName)
+
     res.status(201).json(addItem);
   } catch (error) {
     res.status(400).send(error.message);
   }
 });
+
 
 export default router;
