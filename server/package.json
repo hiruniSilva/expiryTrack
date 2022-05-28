@@ -10,8 +10,11 @@
     "sequelize-cli": "^6.4.1"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "esm": "^3.2.25",
     "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.3",
     "sequelize": "^6.17.0",
     "yup": "^0.32.11"
