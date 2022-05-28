@@ -12,9 +12,3 @@ app.use('/api', require('./routes/index').default);
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
-
-
-
-
-
-
