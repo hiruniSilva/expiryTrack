@@ -96,9 +96,19 @@ const ItemAdd = () => {
       <br />
       <br />
      
-      <button>
+      {/* <button>
         <Link to={"/"}>LogOut</Link>
-      </button>
+      </button> */}
+
+      <div>
+        <button style={{ float: "left", bottom: 0 }}>
+          <Link to="/item-summary">Item-Summary</Link>
+        </button>
+        <button style={{ float: "right", bottom: 0 }}>
+          <Link to="/">Log-Out</Link>
+        </button>
+      </div>
+
     </div>
   );
 };

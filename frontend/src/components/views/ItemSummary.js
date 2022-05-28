@@ -95,12 +95,12 @@ export default function Item() {
       <br />
       <br />
       <div>
-        <Button style={{ float: "left", bottom: 0 }}>
+        <button style={{ float: "left", bottom: 0 }}>
           <Link to="/item-add">Item-Add</Link>
-        </Button>
-        <Button style={{ float: "right", bottom: 0 }}>
+        </button>
+        <button style={{ float: "right", bottom: 0 }}>
           <Link to="/">Log-Out</Link>
-        </Button>
+        </button>
       </div>
     </div>
   );
