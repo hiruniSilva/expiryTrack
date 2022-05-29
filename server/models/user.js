@@ -34,6 +34,30 @@ module.exports = (sequelize, DataTypes) => {
 			return bcrypt.hash(password, 10);
 		}
 
+    comparePassword(password){
+      return bcrypt.compare(password, this.passwordHash);
+    }
+
+    generateTokens() {
+			let payload = {
+				id: this.id,
+				username: this.username,
+				roles: this.roles,
+			};
+			let accessToken = jwt.sign(payload, config.ACCESS_TOKEN_SECRET, {
+				algorithm: "HS256",
+				expiresIn: config.ACCESS_TOKEN_LIFE,
+			});
+			let refreshToken = jwt.sign(payload, config.REFRESH_TOKEN_SECRET, {
+				algorithm: "HS256",
+				expiresIn: config.REFRESH_TOKEN_LIFE,
+			});
+			return {
+				accessToken,
+				refreshToken,
+			};
+		}
+
   }
   User.init({
     fullname: DataTypes.STRING,

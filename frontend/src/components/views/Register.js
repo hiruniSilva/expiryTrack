@@ -1,14 +1,54 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import * as React from "react";
+import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import Form from "../../utilities/Forms";
 import { useHistory } from "react-router-dom";
+// import axios from "axios";
+import { toast } from "react-toastify";
+import axios from "../../services/api.service";
+
+import {useFormik } from "formik";
 
 const Register = () => {
+  const [] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const UserSchema = Yup.object().shape({
+    fullname: Yup.string().required("Required !"),
+    email: Yup.string()
+      .email("Email must be a valid email address")
+      .required("Email is required"),
+    password: Yup.string().required("Password is required"),
+    roles: Yup.array().of(Yup.string()),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      fullname: "",
+      email: "",
+      password: "",
+      roles: [],
+    },
+    validationSchema: UserSchema,
+    onSubmit: (data) => {
+      axios
+        .post("/api/user/addUser", data)
+        .then((res) => {
+          toast.success(`User created successfully`);
+          formik.resetForm();
+        })
+        .catch((err) => {
+          toast.error("Something went wrong. Please try again later !");
+          formik.setSubmitting(false);
+        });
+    },
+  });
 
   const validateRegister = () => {
     let isValid = true;
@@ -51,8 +91,6 @@ const Register = () => {
       setEmail("");
       setPassword("");
       alert("Successfully Register User");
-
-      
     }
   };
 
@@ -67,13 +105,12 @@ const Register = () => {
   const history = useHistory();
 
   const routeChange = () => {
-    const validate = validateRegister()
-    if (validate){
+    const validate = validateRegister();
+    if (validate) {
       let path = `/login`;
-      history.push(path); 
+      history.push(path);
     }
-  }
-
+  };
 
   return (
     <div className="row g-0 auth-wrapper">
@@ -89,8 +126,9 @@ const Register = () => {
             <div className="auth-form-container text-start">
               <form
                 className="auth-form"
+                
                 method="POST"
-                onSubmit={register}
+                onSubmit={formik.handleSubmit}
                 autoComplete={"off"}
               >
                 <div className="name mb-3">
@@ -105,7 +143,14 @@ const Register = () => {
                     name="name"
                     value={name}
                     placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
+                    {...formik.getFieldProps("fullname")}
+                    error={
+                      formik.touched.fullname && Boolean(formik.errors.fullname)
+                    }
+                    helperText={
+                      formik.touched.fullname && formik.errors.fullname
+                    }
+                    // onChange={(e) => setName(e.target.value)}
                   />
 
                   <div
@@ -133,7 +178,16 @@ const Register = () => {
                     name="email"
                     value={email}
                     placeholder="Email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...formik.getFieldProps("email")}
+                    error={
+                      formik.touched.email && Boolean(formik.errors.email)
+                    }
+                    helperText={
+                      formik.touched.email && formik.errors.email
+                    }
+
+                    
+                    // onChange={(e) => setEmail(e.target.value)}
                   />
 
                   <div
@@ -162,7 +216,14 @@ const Register = () => {
                       id="password"
                       value={password}
                       placeholder="Password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...formik.getFieldProps("password")}
+                    error={
+                      formik.touched.password && Boolean(formik.errors.password)
+                    }
+                    helperText={
+                      formik.touched.password && formik.errors.password
+                    }
+                      // onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <button

@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import * as Yup from 'yup';
+import { Link , useHistory} from "react-router-dom";
+import { useFormik, FormikProvider } from 'formik';
 import Form from "../../utilities/Forms";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { useSetRecoilState } from 'recoil';
 // import Item from "./Item";
+import { toast } from 'react-toastify';
+import axios from "../../services/api.service";
+import { currentUserState } from '../../services/auth.service';
+import { LoadingButton } from '@mui/lab';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +17,45 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const history = useHistory();
+  const setCurrentUser = useSetRecoilState(currentUserState);
+
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string().email("Email must be a valid email address").required("Email is required!"),
+    password: Yup.string().required("Password is required!")
+  })
+
+  const formik = useFormik({
+    initialValues: {
+      email:'',
+      password: ''
+    },
+
+    validationSchema: LoginSchema,
+    onSubmit: (data) => {
+      axios
+        .post('/api/auth/login', data)
+        .then((res) => {
+          setCurrentUser(res.data.user);
+          console.log(res.data.user);
+          toast.success(`Welcome ${res.data.user.fullname}`);
+          // const history = useHistory();
+
+          if(res.data.user != null){
+            let path = "/item-summary";
+            history.push(path); 
+            console.log("test")
+            // navigate('/getItems');
+          }
+        })
+        .catch((err)=> {
+          toast.error("Incorrect email or Password");
+          formik.setSubmitting(false);
+        })
+    }
+  })
+
+  const {errors, touched, isSubmitting, handleSubmit, getFieldProps} = formik;
 
   const validateLogin = () => {
     let isValid = true;
@@ -37,18 +83,18 @@ const Login = () => {
     return isValid;
   };
 
-  const authenticate = (e) => {
-    e.preventDefault();
+  // const authenticate = (e) => {
+  //   e.preventDefault();
 
-    const validate = validateLogin();
+  //   const validate = validateLogin();
 
-    if (validate) {
-      setValidate({});
-      setEmail("");
-      setPassword("");
-      alert("Successfully Login");
-    }
-  };
+  //   if (validate) {
+  //     setValidate({});
+  //     setEmail("");
+  //     setPassword("");
+  //     alert("Successfully Login");
+  //   }
+  // };
 
   const togglePassword = (e) => {
     if (showPassword) {
@@ -58,7 +104,7 @@ const Login = () => {
     }
   };
 
-  const history = useHistory();
+  // const history = useHistory();
   
   const onclickLogin = (event) => {
     event.preventDefault();
@@ -72,6 +118,7 @@ const Login = () => {
   }
 
   return (
+    <FormikProvider value={formik}>
     <div className="row g-0 auth-wrapper">
       <div className="col-12 col-md-5 col-lg-6 h-100 auth-background-col">
         <div className="auth-background-holder"></div>
@@ -85,13 +132,14 @@ const Login = () => {
             <div className="auth-form-container text-start">
               <form
                 className="auth-form"
-                method="POST"
-                onSubmit={authenticate}
+                onSubmit={handleSubmit}
                 autoComplete={"off"}
+                noValidate
               >
                 <div className="email mb-3">
                   <input
                     type="email"
+                    autoComplete="username"
                     className={`form-control ${
                       validate.validate && validate.validate.email
                         ? "is-invalid "
@@ -101,10 +149,13 @@ const Login = () => {
                     name="email"
                     value={email}
                     placeholder="Email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...getFieldProps('email')}
+                    error={Boolean(touched.email && errors.email)}
+                    helperText={touched.email && errors.email}
+                    // onChange={(e) => setEmail(e.target.value)}
                   />
 
-                  <div
+                  {/* <div
                     className={`invalid-feedback text-start ${
                       validate.validate && validate.validate.email
                         ? "d-block"
@@ -114,12 +165,13 @@ const Login = () => {
                     {validate.validate && validate.validate.email
                       ? validate.validate.email[0]
                       : ""}
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="password mb-3">
                   <div className="input-group">
                     <input
+                      autoComplete="current-password"
                       type={showPassword ? "text" : "password"}
                       className={`form-control ${
                         validate.validate && validate.validate.password
@@ -130,7 +182,10 @@ const Login = () => {
                       id="password"
                       value={password}
                       placeholder="Password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...getFieldProps('password')}
+                      error={Boolean(touched.password && errors.password)}
+                      helperText={touched.password && errors.password}
+                      // onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <button
@@ -158,7 +213,7 @@ const Login = () => {
                     </div>
                   </div>
 
-                  <div className="extra mt-3 row justify-content-between">
+                  {/* <div className="extra mt-3 row justify-content-between">
                     <div className="col-6">
                       <div className="form-check">
                         <input
@@ -178,16 +233,19 @@ const Login = () => {
                         <Link to="/forgot-password">Forgot password?</Link>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="text-center">
-                  <button
+                  <LoadingButton
                     type="submit"
+                    // size="large"
                     className="btn btn-primary w-100 theme-btn mx-auto"
-                    onClick={onclickLogin}
+                    // onClick={onclickLogin}
+                    variant="contained"
+                    loading={isSubmitting}
                   >
                     Log In
-                  </button>
+                  </LoadingButton>
                 </div>
               </form>
 
@@ -203,7 +261,9 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </FormikProvider>
   );
 };
+
 
 export default Login;

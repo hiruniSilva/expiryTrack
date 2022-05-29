@@ -30,10 +30,18 @@ router.post('/addUser', async(req,res) => {
 			roles,
 			passwordHash: await models.User.hashPassword(password),
 		});
-
     }catch(error){
         res.status(400).send(error.message);
     }
 })
+
+router.get("/current", validateToken, async(req,res) => {
+    const user = await models.User.findOne({
+        where: {
+            id: req.user.id
+        }
+    });
+    res.send(user? user.toUserJson(): null)
+});
 
 export default router;
