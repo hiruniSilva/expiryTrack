@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import * as React from "react";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Form from "../../utilities/Forms";
 import { useHistory } from "react-router-dom";
 // import axios from "axios";
@@ -102,13 +102,13 @@ const Register = () => {
     }
   };
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const routeChange = () => {
     const validate = validateRegister();
     if (validate) {
       let path = `/login`;
-      history.push(path);
+      navigate(path);
     }
   };
 

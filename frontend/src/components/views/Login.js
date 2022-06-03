@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as Yup from 'yup';
-import { Link , useHistory} from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { useFormik, FormikProvider } from 'formik';
 import Form from "../../utilities/Forms";
 // import { useHistory } from "react-router-dom";
@@ -17,7 +17,7 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const setCurrentUser = useSetRecoilState(currentUserState);
 
   const LoginSchema = Yup.object().shape({
@@ -43,9 +43,9 @@ const Login = () => {
 
           if(res.data.user != null){
             let path = "/item-summary";
-            history.push(path); 
+            // history.push(path); 
             console.log("test")
-            // navigate('/getItems');
+            navigate(+1);
           }
         })
         .catch((err)=> {
@@ -111,9 +111,10 @@ const Login = () => {
 
     const validate1 = validateLogin()
     if (validate1){
-      let path = "/item-summary";
-      history.push(path); 
+      // let path = "/item-summary";
+      // history.push(path); 
       console.log("test")
+      navigate("/item-summary");
     }
   }
 
