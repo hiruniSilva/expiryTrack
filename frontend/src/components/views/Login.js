@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import axios from "../../services/api.service";
 import { currentUserState } from '../../services/auth.service';
 import { LoadingButton } from '@mui/lab';
+import ItemSummary from '../../components/views/ItemSummary';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,8 +18,8 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const navigate = useNavigate();
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Email must be a valid email address").required("Email is required!"),
@@ -39,14 +40,11 @@ const Login = () => {
           setCurrentUser(res.data.user);
           console.log(res.data.user);
           toast.success(`Welcome ${res.data.user.fullname}`);
-          // const history = useHistory();
+          navigate("/ItemSummary");
+          console.log('TEST')
 
-          if(res.data.user != null){
-            let path = "/item-summary";
-            // history.push(path); 
-            console.log("test")
-            navigate(+1);
-          }
+
+         
         })
         .catch((err)=> {
           toast.error("Incorrect email or Password");
@@ -83,18 +81,18 @@ const Login = () => {
     return isValid;
   };
 
-  // const authenticate = (e) => {
-  //   e.preventDefault();
+  const authenticate = (e) => {
+    e.preventDefault();
 
-  //   const validate = validateLogin();
+    const validate = validateLogin();
 
-  //   if (validate) {
-  //     setValidate({});
-  //     setEmail("");
-  //     setPassword("");
-  //     alert("Successfully Login");
-  //   }
-  // };
+    if (validate) {
+      setValidate({});
+      setEmail("");
+      setPassword("");
+      alert("Successfully Login");
+    }
+  };
 
   const togglePassword = (e) => {
     if (showPassword) {
@@ -107,15 +105,17 @@ const Login = () => {
   // const history = useHistory();
   
   const onclickLogin = (event) => {
+    
     event.preventDefault();
+    
 
-    const validate1 = validateLogin()
-    if (validate1){
+    // const validate1 = validateLogin()
+    // if (validate1){
       // let path = "/item-summary";
       // history.push(path); 
       console.log("test")
       navigate("/item-summary");
-    }
+    // }
   }
 
   return (
@@ -241,7 +241,7 @@ const Login = () => {
                     type="submit"
                     // size="large"
                     className="btn btn-primary w-100 theme-btn mx-auto"
-                    // onClick={onclickLogin}
+                    onClick={onclickLogin}
                     variant="contained"
                     loading={isSubmitting}
                   >
